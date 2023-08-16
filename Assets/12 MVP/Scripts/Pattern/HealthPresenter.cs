@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using DesignPatterns.Singleton;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,11 +18,15 @@ namespace DesignPatterns.MVP
         [SerializeField] Slider healthSlider;
         [SerializeField] Text healthText;
 
+        [Header("Audio")]
+        [SerializeField] AudioClip[] _clips;
+
+
 
         /// <summary>
         /// Other observer components need to attach to this presenter.
         /// </summary>
-        private AudioSource _audioSource;
+        //private AudioSource _audioSource;
 
 
 
@@ -30,10 +35,10 @@ namespace DesignPatterns.MVP
         public IView View => throw new System.NotImplementedException();
 
 
-        private void Awake()
-        {
-            _audioSource = this.GetComponent<AudioSource>();
-        }
+        //private void Awake()
+        //{
+        //    _audioSource = this.GetComponent<AudioSource>();
+        //}
 
         private void Start()
         {
@@ -42,8 +47,6 @@ namespace DesignPatterns.MVP
                 _health.HealthChanged += OnHealthChanged;
                 _health.ZeroHealth += OnHealthToZero;
             }
-
-            Reset();
         }
 
         private void OnDestroy()
@@ -89,6 +92,15 @@ namespace DesignPatterns.MVP
                 _health.Restore();
         }
 
+
+        public int GetCurrentHealth()
+        {
+            if (_health == null)
+                return -1;
+
+            return _health.CurrentHealth;
+        }
+
         #endregion
 
         #region To View
@@ -114,11 +126,13 @@ namespace DesignPatterns.MVP
         public void OnHealthChanged()
         {
             UpdateView();
+            AudioManager.Instance.PlaySoundEffect(_clips[0]);
         }
 
         public void OnHealthToZero()
         {
-            _audioSource.Play();
+            //_audioSource.Play();
+            AudioManager.Instance.PlaySoundEffect(_clips[1]);
         }
         #endregion
     }

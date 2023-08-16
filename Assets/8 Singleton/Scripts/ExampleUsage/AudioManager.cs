@@ -22,8 +22,8 @@ namespace DesignPatterns.Singleton
             if (audioSource == null)
                 return;
 
-            audioSource.volume = Random.Range(volume.x, volume.y);
-            audioSource.pitch = Random.Range(pitch.x, pitch.y);
+            //audioSource.volume = Random.Range(volume.x, volume.y);
+            //audioSource.pitch = Random.Range(pitch.x, pitch.y);
 
             audioSource.clip = clip;
             audioSource.Stop();
