@@ -8,18 +8,13 @@ namespace DesignPatterns.Observer
     [RequireComponent(typeof(Collider))]
     public class ButtonSubject: MonoBehaviour
     {
-        public event Action Clicked;
+        public static event Action Clicked;
 
-        private Collider collider;
+        private Collider _collider;
 
         void Start()
         {
-            collider = GetComponent<Collider>();
-        }
-
-        public void ClickButton()
-        {
-            Clicked?.Invoke();
+            _collider = GetComponent<Collider>();
         }
 
         void Update()
@@ -32,16 +27,20 @@ namespace DesignPatterns.Observer
             if (Input.GetMouseButtonDown(0))
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hitInfo;
 
-                if (Physics.Raycast(ray, out hitInfo, 100f))
+                if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f))
                 {
-                    if (hitInfo.collider == this.collider)
+                    if (hitInfo.collider == _collider)
                     {
                         ClickButton();
                     }
                 }
             }
+        }
+
+        private void ClickButton()
+        {
+            Clicked?.Invoke();
         }
     }
 }

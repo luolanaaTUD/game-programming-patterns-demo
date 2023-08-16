@@ -7,34 +7,46 @@ namespace DesignPatterns.Observer
 
     public class ParticleSystemObserver : MonoBehaviour
     {
-        [SerializeField] ButtonSubject subjectToObserve;
-        [SerializeField] ParticleSystem particleSystem;
+        //[SerializeField] ButtonSubject subjectToObserve;
+        [SerializeField] private ParticleSystem _particleSystem;
 
-        private void Awake()
+        //private void Awake()
+        //{
+        //    if (subjectToObserve != null)
+        //    {
+        //        subjectToObserve.Clicked += OnThingHappened;
+        //    }
+
+        //}
+
+        private void OnEnable()
         {
-            if (subjectToObserve != null)
-            {
-                subjectToObserve.Clicked += OnThingHappened;
-            }
+            ButtonSubject.Clicked += OnThingHappened;
+        }
+
+        private void OnDisable()
+        {
+            ButtonSubject.Clicked -= OnThingHappened;
         }
 
         private void OnThingHappened()
         {
-            if (particleSystem != null)
+            if (_particleSystem != null)
             {
-                particleSystem.Stop();
-                particleSystem.Play();
+                _particleSystem.Stop();
+                _particleSystem.Play();
             }
         }
 
-        private void OnDestroy()
-        {
-            // unsubscribe/deregister from the event if we destroy the object
-            if (subjectToObserve != null)
-            {
-                subjectToObserve.Clicked -= OnThingHappened;
-            }
-        }
+        //private void OnDestroy()
+        //{
+        //    //unsubscribe / deregister from the event if we destroy the object
+        //    if (subjectToObserve != null)
+        //    {
+        //        subjectToObserve.Clicked -= OnThingHappened;
+        //    }
+
+        //}
 
     }
 }

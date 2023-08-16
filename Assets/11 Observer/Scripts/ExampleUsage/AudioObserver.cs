@@ -8,7 +8,7 @@ namespace DesignPatterns.Observer
     public class AudioObserver : MonoBehaviour
     {
         // dependency to observe
-        [SerializeField] ButtonSubject subjectToObserve;
+        //[SerializeField] ButtonSubject subjectToObserve;
         [SerializeField] float delay = 0f;
         private AudioSource source;
 
@@ -16,10 +16,19 @@ namespace DesignPatterns.Observer
         {
             source = GetComponent<AudioSource>();
 
-            if (subjectToObserve != null)
-            {
-                subjectToObserve.Clicked += OnThingHappened;
-            }
+            //if (subjectToObserve != null)
+            //{
+            //}
+        }
+
+        private void OnEnable()
+        {
+            ButtonSubject.Clicked += OnThingHappened;
+        }
+
+        private void OnDisable()
+        {
+            ButtonSubject.Clicked -= OnThingHappened;
         }
 
         public void OnThingHappened()
@@ -34,13 +43,14 @@ namespace DesignPatterns.Observer
             source.Play();
         }
 
-        private void OnDestroy()
-        {
-            // unsubscribe/deregister from the event if we destroy the object
-            if (subjectToObserve != null)
-            {
-                subjectToObserve.Clicked -= OnThingHappened;
-            }
-        }
+        //private void OnDestroy()
+        //{
+        //    // unsubscribe/deregister from the event if we destroy the object
+        //    if (subjectToObserve != null)
+        //    {
+        //        ButtonSubject.Clicked -= OnThingHappened;
+        //    }
+        //}
+
     }
 }

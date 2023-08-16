@@ -5,23 +5,42 @@ using UnityEngine.UI;
 
 namespace DesignPatterns.MVP
 {
-    // The Presenter. This listens for View changes in the user interface and the manipulates the Model (Health)
-    // in response. The Presenter updates the View when the Model changes.
+    // The Presenter. This listens for View changes in the user interface and the manipulates the Model (Health) in response.
+    // The Presenter updates the View when the Model changes.
 
-    public class HealthPresenter : MonoBehaviour
+    public class HealthPresenter : MonoBehaviour, IPresenter
     {
         [Header("Model")]
-        [SerializeField] Health health;
+        [SerializeField] Health _health;
 
         [Header("View")]
         [SerializeField] Slider healthSlider;
         [SerializeField] Text healthText;
 
+
+        /// <summary>
+        /// Other observer components need to attach to this presenter.
+        /// </summary>
+        private AudioSource _audioSource;
+
+
+
+        public IModel Model => _health;
+
+        public IView View => throw new System.NotImplementedException();
+
+
+        private void Awake()
+        {
+            _audioSource = this.GetComponent<AudioSource>();
+        }
+
         private void Start()
         {
-            if (health != null)
+            if (_health != null)
             {
-                health.HealthChanged += OnHealthChanged;
+                _health.HealthChanged += OnHealthChanged;
+                _health.ZeroHealth += OnHealthToZero;
             }
 
             Reset();
@@ -29,43 +48,65 @@ namespace DesignPatterns.MVP
 
         private void OnDestroy()
         {
-            if (health != null)
+            if (_health != null)
             {
-                health.HealthChanged -= OnHealthChanged;
+                _health.HealthChanged -= OnHealthChanged;
+                _health.ZeroHealth -= OnHealthToZero;
             }
         }
+
+        //private void OnEnable()
+        //{
+        //    Health.HealthChanged += OnHealthChanged;
+        //    Reset();
+        //}
+
+        //private void OnDisable()
+        //{
+        //    Health.HealthChanged -= OnHealthChanged;
+        //}
+
+
+        #region To Model
 
         // send damage to the model
         public void Damage(int amount)
         {
-            health?.Decrement(amount);
+            if(_health != null)
+                _health.Decrement(amount);
         }
 
         public void Heal(int amount)
         {
-            health?.Increment(amount);
+            if (_health != null)
+                _health.Increment(amount);
         }
 
         // send reset to the model
         public void Reset()
         {
-            health?.Restore();
+            if (_health != null)
+                _health.Restore();
         }
 
-        public void UpdateView()
+        #endregion
+
+        #region To View
+
+        private void UpdateView()
         {
-            if (health == null)
+            if (_health == null)
                 return;
 
             // format the data for view
-            if (healthSlider !=null && health.MaxHealth != 0)
+            if (healthSlider !=null && _health.MaxHealth != 0)
             {
-                healthSlider.value = (float) health.CurrentHealth / (float)health.MaxHealth;
+                healthSlider.value = (float)_health.CurrentHealth / (float)_health.MaxHealth;
             }
 
             if (healthText != null)
             {
-                healthText.text = health.CurrentHealth.ToString();
+                healthText.text = $"{_health.CurrentHealth}";
             }
         }
 
@@ -74,5 +115,11 @@ namespace DesignPatterns.MVP
         {
             UpdateView();
         }
+
+        public void OnHealthToZero()
+        {
+            _audioSource.Play();
+        }
+        #endregion
     }
 }

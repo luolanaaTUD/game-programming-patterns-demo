@@ -7,14 +7,14 @@ namespace DesignPatterns.MVP
     [RequireComponent(typeof(HealthPresenter), typeof(Collider))]
     public class ClickDamage : MonoBehaviour
     {
-        private Collider collider;
+        private Collider _collider;
         private HealthPresenter healthPresenter;
         [SerializeField] private LayerMask layerToClick;
         [SerializeField] private int damageValue = 10;
 
         private void Start()
         {
-            collider = GetComponent<Collider>();
+            _collider = GetComponent<Collider>();
             healthPresenter = GetComponent<HealthPresenter>();
         }
 

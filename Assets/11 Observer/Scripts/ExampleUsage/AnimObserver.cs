@@ -7,13 +7,26 @@ namespace DesignPatterns.Observer
     public class AnimObserver : MonoBehaviour
     {
         [SerializeField] Animation animClip;
-        [SerializeField] ButtonSubject subjectToObserve;
-        void Start()
+
+        //[SerializeField] ButtonSubject subjectToObserve;
+        //void Start()
+        //{
+
+        //    if (subjectToObserve != null)
+        //    {
+        //        subjectToObserve.Clicked += OnThingHappened;
+        //    }
+
+        //}
+
+        private void OnEnable()
         {
-            if (subjectToObserve != null)
-            {
-                subjectToObserve.Clicked += OnThingHappened;
-            }
+            ButtonSubject.Clicked += OnThingHappened;
+        }
+
+        private void OnDisable()
+        {
+            ButtonSubject.Clicked -= OnThingHappened;
         }
 
         private void OnThingHappened()
