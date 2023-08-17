@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using DesignPatterns.Singleton;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +15,7 @@ namespace DesignPatterns.MVP
         [Header("View")]
         [SerializeField] Slider healthSlider;
         [SerializeField] Text healthText;
+        [SerializeField] ViewUI _view;
 
         [Header("Audio")]
         [SerializeField] AudioClip[] _clips;
@@ -32,7 +31,7 @@ namespace DesignPatterns.MVP
 
         public IModel Model => _health;
 
-        public IView View => throw new System.NotImplementedException();
+        public IView View => _view;
 
 
         //private void Awake()
@@ -47,6 +46,9 @@ namespace DesignPatterns.MVP
                 _health.HealthChanged += OnHealthChanged;
                 _health.ZeroHealth += OnHealthToZero;
             }
+
+            // reset to default.
+            UpdateViewUI();
         }
 
         private void OnDestroy()
@@ -113,7 +115,7 @@ namespace DesignPatterns.MVP
             // format the data for view
             if (healthSlider !=null && _health.MaxHealth != 0)
             {
-                healthSlider.value = (float)_health.CurrentHealth / (float)_health.MaxHealth;
+                healthSlider.value = (float)_health.CurrentHealth / _health.MaxHealth;
             }
 
             if (healthText != null)
@@ -122,10 +124,26 @@ namespace DesignPatterns.MVP
             }
         }
 
+        /// <summary>
+        /// UI toolkit.
+        /// </summary>
+        private void UpdateViewUI()
+        {
+            if (_view == null)
+                return;
+
+            if(_health.MaxHealth != 0)
+            {
+                _view.UpdateHealthValue(_health.CurrentHealth);
+            }
+        }
+
         // listen for model changes and update the view
         public void OnHealthChanged()
         {
             UpdateView();
+            UpdateViewUI();
+
             AudioManager.Instance.PlaySoundEffect(_clips[0]);
         }
 
